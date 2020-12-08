@@ -8,7 +8,7 @@
 	<video id="vid" controls></video>
 	<script>
 		// 连接远程服务器
-	const client = new WebSocket('ws://192.168.30.1:8088');
+	const client = new WebSocket('ws://192.168.22.136:8088');
 	let queue = [];
 	let sourceBuffer = null;
 	let mediaSource = new MediaSource();
@@ -67,7 +67,7 @@ function playVideo(){
 function sourceopen(e){
 	  URL.revokeObjectURL(vid.src);
     // var mime = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
-    var mime = 'video/webm;codecs=vp9';
+    var mime = 'video/webm;codecs=vp8';
     // vid.play();
 	sourceBuffer = mediaSource.addSourceBuffer(mime);
 	// queue.shift().arrayBuffer().then(res=>{
