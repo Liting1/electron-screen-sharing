@@ -8,10 +8,17 @@
  */
 
 const { desktopCapturer } = require('electron');
+
 class Initiate {
     constructor(){
         this.video = this.getEl('#move');
         this.client = null;
+        this.oneHeader = true;
+        this.sendData = {
+            user: 101, // 101 表示分享屏幕 102 表示观看屏幕
+            msgCode: 101, // 消息类型 101 视频header 102 视频其他段 103 视频结束 104 身份消息
+            size: 36
+        }
     }
     getEl(selector){
         return document.querySelector(selector);
@@ -19,8 +26,7 @@ class Initiate {
     // 初始化函数
     init(){
         this.getStream();
-        this.createSocket('ws://192.168.22.136:8088');
-
+        this.createSocket('ws://192.168.30.1:8088');
     }
     // 创建socket连接
     createSocket(url){
@@ -33,6 +39,8 @@ class Initiate {
     // 客户端连接服务器成功
     handleOpen(ev){
         console.log('客户端连接成功');
+        this.sendData.msgCode = 104
+        this.client.send(JSON.stringify(this.sendData));
     }
     // 客户端断开服务器连接
     handleClose(ev){
@@ -103,9 +111,20 @@ class Initiate {
         }
         this.getEl('.stop').onclick = ()=>{
             recorder.stop();
+            playVideo();
         }
         recorder.ondataavailable = event =>{
-            this.client.send(event.data);
+            let data = null;
+            if(this.oneHeader){
+                this.oneHeader = false;
+                this.sendData.msgCode = 101
+                data = new Blob([JSON.stringify(this.sendData), event.data])
+            } else {
+                this.sendData.msgCode = 102
+                data = new Blob([JSON.stringify(this.sendData), event.data])
+            }
+            console.log(event.data);
+            this.client.send(data);
         }
         recorder.onerror = e =>{
             console.log(e);
@@ -119,6 +138,9 @@ class Initiate {
         recorder.onstart = e=>{
             console.log("开始录制")
         }
+    }
+    test(){
+
     }
 }
 

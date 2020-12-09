@@ -42,16 +42,19 @@ class CreateSocket{
     }
 
     // 进行广播函数
-    broadcast(data, ws) {
+    broadcast(data, ws, noSelf) {
         this.wss.clients.forEach(client => {
             // 广播到包括自己的用户
-            if(client.readyState == WebSocket.OPEN){
-                client.send(data);
+            if(noSelf){
+                if(client.readyState == WebSocket.OPEN){
+                    client.send(data);
+                }
+            } else {
+                // 广播不包括自己的用户
+                if (client !== ws && client.readyState === WebSocket.OPEN) {
+                    client.send(data);
+                }
             }
-            // 广播不包括自己的用户
-            // if (client !== ws && client.readyState === WebSocket.OPEN) {
-            //     client.send(data);
-            // }
         })
     }
 
@@ -72,7 +75,34 @@ class CreateSocket{
     // 处理客户端发送的消息
     messageHandle(data, ws){
         // 将数据进行广播
-        this.broadcast(data, ws);
+
+        if(typeof data === 'string'){
+            // 普通消息
+            data = JSON.parse(data);
+            // 发起屏幕分享连接成功
+            if(data.user == 101 && data.msgCode == 104){
+                this.header = null;
+            }
+            // 观看屏幕分享的用户连接成功
+            if(data.user == 102 && data.msgCode == 104){
+                if(this.header){
+                    // 发送 header
+                    ws.send(this.header);
+                }
+            }
+            // this.broadcast(data, ws, true);
+        } else {
+            // 视频消息,数据拆解
+            let msg = data.slice(0, 36).toString();
+            let blob = data.slice(36);
+            msg = JSON.parse(msg);
+            if(msg.msgCode == 101){
+                this.header = blob //.slice(0, 10240); // 存储第一帧数据
+            } else if(msg.msgCode == 102){
+                
+            }
+           this.broadcast(blob, ws, false);
+        }
     }
     // 处理客户端断开连接
     closeHandle(ev){
@@ -84,7 +114,8 @@ class CreateSocket{
     }
     // 连接成功
     connectionHandle(ws){
-        console.log("有客户端连接")
+        console.log("有客户端连接");
+        // ws.send("哈哈哈哈");
     }
 }
 
