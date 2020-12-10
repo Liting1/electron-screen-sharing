@@ -26,7 +26,7 @@ class Initiate {
     // 初始化函数
     init(){
         this.getStream();
-        this.createSocket('ws://192.168.30.1:8088');
+        this.createSocket('ws://192.168.22.136:8088');
     }
     // 创建socket连接
     createSocket(url){

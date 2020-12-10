@@ -15,7 +15,7 @@ class View {
         this.MediaSource = null;
         this.video = document.querySelector('#vid');
         this.mime = 'video/webm;codecs=vp8';
-        this.socktUrl = 'ws://192.168.30.1:8088';
+        this.socktUrl = 'ws://192.168.22.136:8088';
         this.sendData = {
             user: 102, // 101 表示分享屏幕 102 表示观看屏幕
             msgCode: 100, // 消息类型 101 视频header 102 视频其他段 103 视频结束 104 身份消息
