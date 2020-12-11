@@ -1,57 +1,39 @@
-<!--
- * @Author: your name
- * @Date: 2020-12-10 22:36:50
- * @LastEditTime: 2020-12-10 23:56:29
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: \webRTC\public\index.html
--->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>视频共享</title>
+	<meta charset="UTF-8">
+	<title>播放屏幕分享</title>
 </head>
 <body>
-    <!-- 创建视频标签 -->
-    <video id="vid" autoplay muted></video>
+	<video id="vid" autoplay></video>
     <button class="start">开始</button>
     <button class="stop">停止</button>
-    <script>
-        const localVideo = document.querySelector("#vid");
+	<script>
+		const remoteVideo = document.querySelector("#vid");
         const start = document.querySelector(".start");
         const stop = document.querySelector(".stop");
         let stereo = false; // sdp
 
-        async function createConnection{
-            const response1 = await fetch('/connections',{method: 'POST'});
-
-            
+		async function createConnection{
+            const response1 = await fetch('/connections/view',{method: 'POST'});
             const { id, localDescription} = await response1.json();
             const localPeerConnection = new RTCPeerConnection({
                 sdpSemantics: 'unified-plan'
             });
             localPeerConnection.close = function () {
-                fetch(`/connections/${id}`, {method: 'delete'}).catch((err)=>console.log(err));
+                fetch(`/connections/view/${id}`, {method: 'DELETE'}).catch((err)=>console.log(err));
                 return RTCPeerConnection.prototype.close();
             }
-
             try {
                 await localPeerConnection.setRemoteDescription(localDescription);
-
                 await beforeAnswer(localPeerConnection);
-
                 const originalAnswer = await localPeerConnection.createAnswer();
-
                 const updatedAnswer = new RTCSessionDescription({
                     type: 'answer',
                     sdp: stereo ? enableStereoOpus(originalAnswer.sdp) : originalAnswer.sdp
                 });
-
                 await localPeerConnection.setLocalDescription(updatedAnswer);
-
-                await fetch(`/connections/${id}/remote-description`, {
+                await fetch(`/connections/view/${id}/remote-description`, {
                     method: 'POST',
                     body: JSON.stringify(localPeerConnection.localDescription),
                     headers: {
@@ -65,19 +47,14 @@
             }
         }
 
-        async function beforeAnswer(peerConnection) {
-            const localStream = await window.navigator.mediaDevices.getUserMedia({
-                audio: true,
-                video: true
-            });
-            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream))
-            localVideo.srcObject = localStream;
-            const { close } = peerConnection;
-            peerConnection.close = function() {
-                localVideo.srcObject = null;
-                localStream.getTracks().forEach(track => track.stop());
-                return close();
-            };
+        async function beforeAnswer(peerConnection){
+        	const remoteStream = new MediaStream(peerConnection.getReceivers().map(receiver => receiver.track));
+        	remoteVideo.srcObject = remoteStream;
+        	const { close } = peerConnection;
+        	peerConnection.close = function(){
+        		remoteVideo.srcObject = null;
+        		return close();
+        	}
         }
 
         function enableStereoOpus(sdp) {
@@ -89,12 +66,9 @@
             peerConnection = await createConnection();
         });
 
-        
         stop.addEventListener('click', ()=>{
             peerConnection.close();
         })
-
-
-    </script>
+	</script>
 </body>
 </html>
