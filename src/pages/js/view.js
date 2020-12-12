@@ -10,80 +10,112 @@
 class View {
     constructor() {
         this.client = null;
-        this.queue = [];
-        this.sourceBuffer = null;
-        this.MediaSource = null;
         this.video = document.querySelector('#vid');
-        this.mime = 'video/webm;codecs=vp8';
-        this.socktUrl = 'ws://192.168.22.136:8088';
-        this.sendData = {
-            user: 102, // 101 表示分享屏幕 102 表示观看屏幕
-            msgCode: 100, // 消息类型 101 视频header 102 视频其他段 103 视频结束 104 身份消息
-            size: 36
-        }
+        this.stereo = false;
+        this.socktUrl = 'ws://192.168.30.1:8088';
+        this.localPeerConnection = null;
+        // {
+        //     user: 101, // 101 表示分享屏幕 102 表示观看屏幕
+        //     msgCode: 101, // 消息类型 101 获取连接ID
+        //     data: {}
+        // }
     }
-    init(){
-		this.createMediaSource();
-		this.connectionSocket();
-		this.clientEvent();
+    init() {
+        this.connectionSocket();
     }
     connectionSocket() {
         this.client = new WebSocket(this.socktUrl);
-    }
-    createMediaSource() {
-        this.mediaSource = new MediaSource();
-    }
-    clientEvent() {
         // 当客户端连接成功之后就会触发open事件
         this.client.addEventListener('open', (ev) => this.handleOpen(ev));
         this.client.addEventListener('message', (ev) => this.handleMessage(ev));
-
+    }
+    send(data) {
+        this.client.send(JSON.stringify(data));
     }
     handleOpen(ev) {
         console.log("客户端连接成功");
-        this.sendData.msgCode = 104;
-        this.client.send(JSON.stringify(this.sendData));
-        this.playVideo();
-    }
-    handleMessage(ev) {
-        // console.log(ev);
-        this.queue.push(ev.data);
-        this.queue.shift().arrayBuffer().then(res => {
-        	console.log(res);
-            this.sourceBuffer.appendBuffer(res);
-        })
-    }
-    playVideo() {
-        let { mediaSource, video } = this;
-        video.src = URL.createObjectURL(mediaSource);
-        mediaSource.addEventListener('sourceopen', (ev) => this.sourceopen(ev));
-        mediaSource.addEventListener('sourceopen', function(e) { console.log('sourceopen: ' + mediaSource.readyState); });
-        mediaSource.addEventListener('sourceended', function(e) { console.log('sourceended: ' + mediaSource.readyState); });
-        mediaSource.addEventListener('sourceclose', function(e) { console.log('sourceclose: ' + mediaSource.readyState); });
-        mediaSource.addEventListener('error', function(e) { console.log('error: ' + mediaSource.readyState); });
-    }
-    sourceopen(ev) {
-        let { mediaSource, queue, video } = this;
-
-        URL.revokeObjectURL(video.src);
-        this.sourceBuffer = mediaSource.addSourceBuffer(this.mime);
-        let sourceBuffer = this.sourceBuffer;
-        sourceBuffer.addEventListener('updatestart', function(e) { console.log('updatestart: ' + mediaSource.readyState); });
-        sourceBuffer.addEventListener('update', function(e) { console.log('update: ' + mediaSource.readyState); });
-        sourceBuffer.addEventListener('updateend', function(e) { console.log('updateend: ' + mediaSource.readyState); });
-        sourceBuffer.addEventListener('error', function(e) {
-            console.log('error: ' + mediaSource.readyState);
+        this.send({
+            user: 102,
+            msgCode: 101,
+            data: null
         });
-        sourceBuffer.addEventListener('abort', function(e) { console.log('abort: ' + mediaSource.readyState); });
-
-        sourceBuffer.addEventListener('update', function() {
-            if (queue.length > 0 && !sourceBuffer.updating) {
-                queue.shift().arrayBuffer().then(res => {
-                    sourceBuffer.appendBuffer(res);
-                })
+    }
+    async handleMessage(ev) {
+        console.log("接收服务端返回的数据");
+        let { user, msgCode, data } = JSON.parse(ev.data);
+        if (user === 102) {
+            if (msgCode === 101) {
+                this.createConnection(data);
+            } else if (msgCode === 102) {
+                console.log(222, data);
+            } else if (msgCode === 103) {
+                console.log(333, data);
             }
+        }
+    }
+    close(){
+        this.this.localPeerConnection.close();
+    }
+    async createConnection( { id, localDescription } ) {
+        const localPeerConnection = new RTCPeerConnection({
+            sdpSemantics: 'unified-plan'
         });
+        localPeerConnection.close = ()=> {
+             this.send({
+                user: 102,
+                msgCode: 103,
+                data: { id }
+            });
+            RTCPeerConnection.prototype.close.apply(localPeerConnection);
+        }
+        try {
+            
+            await localPeerConnection.setRemoteDescription(localDescription);
+            await this.beforeAnswer(localPeerConnection);
+            const originalAnswer = await localPeerConnection.createAnswer();
+            const updatedAnswer = new RTCSessionDescription({
+                type: 'answer',
+                sdp: this.stereo ? this.enableStereoOpus(originalAnswer.sdp) : originalAnswer.sdp
+            });
+            await localPeerConnection.setLocalDescription(updatedAnswer);
+
+            this.send({
+                user: 102,
+                msgCode: 102,
+                data: {
+                    id,
+                    sdp: localPeerConnection.localDescription.sdp,
+                    type: localPeerConnection.localDescription.type
+                }
+            });
+            this.localPeerConnection = localPeerConnection;
+        } catch (e) {
+            localPeerConnection.close();
+            console.log(e);
+        }
+    }
+
+    async beforeAnswer(peerConnection) {
+        const remoteStream = new MediaStream(peerConnection.getReceivers().map(receiver => receiver.track));
+        this.video.srcObject = remoteStream;
+        const { close } = peerConnection;
+        peerConnection.close = () => {
+            this.video.srcObject = null;
+            return close.apply(peerConnection);
+        }
+    }
+
+    enableStereoOpus(sdp) {
+        return sdp.replace(/a=fmtp:111/, 'a=fmtp:111 stereo=1\r\na=fmtp:111');
     }
 }
 
-new View().init();
+let view = new View()
+
+document.querySelector('.start').onclick = function() {
+    view.init();
+}
+
+document.querySelector('.stop').onclick = function() {
+    view.close();
+}

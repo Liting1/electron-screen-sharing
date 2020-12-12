@@ -1,3 +1,11 @@
+<!--
+ * @Author: your name
+ * @Date: 2020-12-11 19:47:10
+ * @LastEditTime: 2020-12-11 21:32:01
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \webRTC\public\views.html
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +13,7 @@
 	<title>播放屏幕分享</title>
 </head>
 <body>
-	<video id="vid" autoplay></video>
+	<video id="vid" autoplay muted></video>
     <button class="start">开始</button>
     <button class="stop">停止</button>
 	<script>
@@ -14,7 +22,7 @@
         const stop = document.querySelector(".stop");
         let stereo = false; // sdp
 
-		async function createConnection{
+		async function createConnection(){
             const response1 = await fetch('/connections/view',{method: 'POST'});
             const { id, localDescription} = await response1.json();
             const localPeerConnection = new RTCPeerConnection({
@@ -22,7 +30,7 @@
             });
             localPeerConnection.close = function () {
                 fetch(`/connections/view/${id}`, {method: 'DELETE'}).catch((err)=>console.log(err));
-                return RTCPeerConnection.prototype.close();
+                return RTCPeerConnection.prototype.close.apply(this, arguments);
             }
             try {
                 await localPeerConnection.setRemoteDescription(localDescription);
@@ -53,7 +61,7 @@
         	const { close } = peerConnection;
         	peerConnection.close = function(){
         		remoteVideo.srcObject = null;
-        		return close();
+        		return close.apply(this, arguments);
         	}
         }
 

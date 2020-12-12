@@ -1,6 +1,14 @@
+/*
+ * @Author: your name
+ * @Date: 2020-12-11 19:47:10
+ * @LastEditTime: 2020-12-11 21:05:21
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \webRTC\connections\connectionmanager.js
+ */
 'use strict';
 
-const uuidv4 = require('uuid/v4');
+const {v4: uuidv4} = require('uuid');
 
 const DefaultConnection = require('./connection');
 

@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-12-10 22:36:50
- * @LastEditTime: 2020-12-10 23:56:29
+ * @LastEditTime: 2020-12-11 21:58:02
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \webRTC\public\index.html
@@ -24,26 +24,21 @@
         const stop = document.querySelector(".stop");
         let stereo = false; // sdp
 
-        async function createConnection{
+        async function createConnection(){
             const response1 = await fetch('/connections/inite',{method: 'POST'});
-
-            
             const { id, localDescription} = await response1.json();
             const localPeerConnection = new RTCPeerConnection({
                 sdpSemantics: 'unified-plan'
             });
             localPeerConnection.close = function () {
                 fetch(`/connections/inite/${id}`, {method: 'delete'}).catch((err)=>console.log(err));
-                return RTCPeerConnection.prototype.close();
+                return RTCPeerConnection.prototype.close.apply(this, arguments);
             }
 
             try {
                 await localPeerConnection.setRemoteDescription(localDescription);
-
                 await beforeAnswer(localPeerConnection);
-
                 const originalAnswer = await localPeerConnection.createAnswer();
-
                 const updatedAnswer = new RTCSessionDescription({
                     type: 'answer',
                     sdp: stereo ? enableStereoOpus(originalAnswer.sdp) : originalAnswer.sdp
@@ -67,29 +62,26 @@
 
         async function beforeAnswer(peerConnection) {
             const localStream = await window.navigator.mediaDevices.getUserMedia({
-                audio: true,
+                audio: false,
                 video: true
             });
             localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream))
             localVideo.srcObject = localStream;
-            const { close } = peerConnection;
+            let { close } = peerConnection;
             peerConnection.close = function() {
                 localVideo.srcObject = null;
                 localStream.getTracks().forEach(track => track.stop());
-                return close();
+                return close.apply(this, arguments);
             };
         }
 
         function enableStereoOpus(sdp) {
             return sdp.replace(/a=fmtp:111/, 'a=fmtp:111 stereo=1\r\na=fmtp:111');
         }
-
         let peerConnection = null;
         start.addEventListener('click', async ()=>{
             peerConnection = await createConnection();
         });
-
-        
         stop.addEventListener('click', ()=>{
             peerConnection.close();
         })
