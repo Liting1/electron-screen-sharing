@@ -6,14 +6,38 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require("copy-webpack-plugin");
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const { params } = require('./common.config');
 const { version } = require('../config/version');
 
+let win = [
+	'renderer', 	// 主窗口页面
+	'view',			// 观看页面
+	'share'			// 分享页面 
+];
+
+
+// 获取打包多页面入口
+function getEnter(win){
+	return win.reduce((a, page)=>(
+		{...a, [page]: path.join(__dirname, `../src/${page}/index.js`)}
+	), {});
+}
+
+// 获取打包多页面模板文件
+function pageTemplate(win){
+	return win.map(page => new HtmlWebpackPlugin({
+		template: `./src/${page}/index.html`,
+		filename: `./${page}.html`,
+		chunks: [page],
+		hash: true,
+	}))
+}
+
 module.exports = {
 	mode: isDevMode ? 'development': 'production',
-	entry: {
-		rebderer: path.join(__dirname, '../src/renderer/index.js')
-	},
+	entry: getEnter(win),
 	output: {
 		path: path.join(__dirname, '../app/'),
 		publicPath: isDevMode ? '/': '',
@@ -101,13 +125,10 @@ module.exports = {
 		}
 	},
 	plugins: [
+		...pageTemplate(win), // 设置HTML模板
+		new BundleAnalyzerPlugin({ analyzerPort: 8888 }),
 		new CleanWebpackPlugin({ // 清除所有文件，main.js文件除外
 			cleanOnceBeforeBuildPatterns: ['**/*', '!main.js*']
-		}),
-		new HtmlWebpackPlugin({		// HTML页面模板插件
-			template: './src/renderer/index.html',
-			filename: './index.html',
-			hash: true,
 		}),
 		new VueLoaderPlugin(),		// vue-loader 加载插件
 		new MiniCssExtractPlugin({	// css打包成css文件插件

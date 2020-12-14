@@ -1,5 +1,5 @@
 {
-    "name": "electron-vue-template",
+    "name": "Sharing_screen",
     "version": "1.0.1",
     "description": "template",
     "main": "./app/main.js",
@@ -47,6 +47,7 @@
         "vue-style-loader": "^4.1.2",
         "vue-template-compiler": "^2.6.12",
         "webpack": "^5.2.0",
+        "webpack-bundle-analyzer": "^4.2.0",
         "webpack-cli": "^4.1.0",
         "webpack-dev-server": "^3.11.0"
     },
@@ -70,7 +71,7 @@
     ],
     "build": {
         "asar": true,
-        "productName": "Electron+vue",
+        "productName": "Sharing screen",
         "appId": "com.electron.template",
         "copyright": "Copyright © year motou",
         "directories": {
@@ -115,7 +116,7 @@
             "allowElevation": true,
             "artifactName": "${productName}-V${version}.${ext}",
             "runAfterFinish": true,
-            "shortcutName": "木头人"
+            "shortcutName": "SharingTheScreen"
         }
     }
 }

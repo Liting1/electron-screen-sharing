@@ -40,8 +40,8 @@ class App {
 		this.win = createMianWin();
 		this.mode === 'production';
 		let filePath = this.mode === 'production'
-			? url.pathToFileURL(path.join(__dirname, 'index.html')).href
-			: "http://localhost:8090/";
+			? url.pathToFileURL(path.join(__dirname, 'renderer.html')).href
+			: "http://localhost:8090/renderer.html";
 		this.win.loadURL(filePath);
 		// 等待渲染进程页面加载完毕再显示窗口
 		this.win.once('ready-to-show', () => this.win.show())
@@ -58,15 +58,11 @@ class App {
 	windowAllClosed(){
 		if(process.platform !== 'darwin') this.app.quit();
 	}
-	registerEvent(){
-		this.event = new RegisterEvent(this.win);
-	}
 	ready(){
 		this.createWindow(); 			// 创建主窗口
 		new CreateSocket().init();		// 创建socket
 		new Shortcut(this.win);			// 设置快捷键
-		this.registerEvent(this.win);	// 注册事件
-		
+		new RegisterEvent(this.win);	// 注册事件
 	}
 	closed(){
 		this.win = null;
