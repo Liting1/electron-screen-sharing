@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const isDevMode = process.env.NODE_ENV === 'development';
@@ -11,26 +12,25 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const { params } = require('./common.config');
 const { version } = require('../config/version');
 
-let win = [
-	'renderer', 	// 主窗口页面
-	'view',			// 观看页面
-	'share'			// 分享页面 
-];
-
+// 获取渲染线程下的所有页面
+const filePath ='./src/renderer/';
+let files = fs.readdirSync(filePath)
+let win = files.filter(page => fs.lstatSync(filePath+page).isDirectory())
 
 // 获取打包多页面入口
 function getEnter(win){
-	return win.reduce((a, page)=>(
-		{...a, [page]: path.join(__dirname, `../src/${page}/index.js`)}
-	), {});
+	return win.reduce((a, page)=>({
+		...a, 
+		[page]: path.join(__dirname, `../src/renderer/${page}/index.js`)
+	}), {});
 }
 
 // 获取打包多页面模板文件
 function pageTemplate(win){
 	return win.map(page => new HtmlWebpackPlugin({
-		template: `./src/${page}/index.html`,
+		template: `./src/renderer/${page}/index.html`,
 		filename: `./${page}.html`,
-		chunks: [page],
+		chunks: ['common', page],
 		hash: true,
 	}))
 }
@@ -121,12 +121,35 @@ module.exports = {
 		extensions:['.js','.json','.vue'],
 		// 常用路径别名
 		alias: {
-			'@': path.join(__dirname, '../src/renderer/')
+			'@': path.join(__dirname, '../src/renderer/home/')
 		}
 	},
 	plugins: [
 		...pageTemplate(win), // 设置HTML模板
-		new BundleAnalyzerPlugin({ analyzerPort: 8888 }),
+		// new BundleAnalyzerPlugin({ analyzerPort: 8888 }), // chunks 分析插件
+		new webpack.optimize.SplitChunksPlugin({
+			cacheGroups: {
+				default: {
+					minChunks: 2,
+					priority: -20,
+					reuseExistingChunk: true
+				},
+				// 打包重复出现的代码
+				vendor: {
+					name: 'vendor',
+					chunks: 'initial',
+					minChunks: 2,
+					maxInitialRequests: 5,
+					minSize: 0
+				},
+				// 打包第三方类库
+				commons: {
+					name: 'commons',
+					chunks: 'initial',
+					minChunks: Infinity
+				}
+			}
+		}),
 		new CleanWebpackPlugin({ // 清除所有文件，main.js文件除外
 			cleanOnceBeforeBuildPatterns: ['**/*', '!main.js*']
 		}),
@@ -137,7 +160,7 @@ module.exports = {
 		}),
 		new CopyPlugin({ // 复制静态文件
 			patterns: [{
-				from: path.join(__dirname, '../src/renderer/assets'),
+				from: path.join(__dirname, '../src/renderer/home/assets'),
 				to: path.join(__dirname, '../app/assets')
 			}, {
 				from: path.join(__dirname, '../src/pages'),

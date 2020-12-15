@@ -24,6 +24,9 @@ function devRender(){
 	    new WebpackDevServer(compiler, {
 			contentBase: webpackDevConfig.output.path,
 			publicPath: webpackDevConfig.output.publicPath,
+			overlay: {		//webpack编译出错时，则显示到网页上
+	       		errors: true
+	        },
 			compress: true,
 			progress: true,			// 显示打包进度
 			hot: true,				// 开启热加载

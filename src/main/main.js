@@ -40,8 +40,8 @@ class App {
 		this.win = createMianWin();
 		this.mode === 'production';
 		let filePath = this.mode === 'production'
-			? url.pathToFileURL(path.join(__dirname, 'renderer.html')).href
-			: "http://localhost:8090/renderer.html";
+			? url.pathToFileURL(path.join(__dirname, 'home.html')).href
+			: "http://localhost:8090/home.html";
 		this.win.loadURL(filePath);
 		// 等待渲染进程页面加载完毕再显示窗口
 		this.win.once('ready-to-show', () => this.win.show())
