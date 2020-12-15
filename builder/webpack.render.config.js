@@ -160,9 +160,11 @@ module.exports = {
 		}),
 		new CopyPlugin({ // 复制静态文件
 			patterns: [{
-				from: path.join(__dirname, '../src/renderer/home/assets'),
-				to: path.join(__dirname, '../app/assets')
+				// 复制项目中所用到的公告文件
+				from: path.join(__dirname, '../src/static'),
+				to: path.join(__dirname, '../app/static')
 			}, {
+				// 复制较小的页面文件
 				from: path.join(__dirname, '../src/pages'),
 				to: path.join(__dirname, '../app/pages')
 			}]

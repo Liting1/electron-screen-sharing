@@ -18,15 +18,15 @@
 ### 项目目录结构
 
 ```
-|—— app
-|—— pack
-|—— builder
-|—— config
-|—— src
-|	 |—— main
-|	 |—— pages
-|	 |—— renderer	
-|—— .babelrc
+|—— app						webpack 构建输出文件目录
+|—— pack					打包软件输出目录
+|—— builder					webpack配置文件目录
+|—— config					配置文件目录
+|—— src 					项目资源目录
+|	 |—— main 				主进程目录
+|	 |—— pages 				其他页面目录
+|	 |—— renderer	  		渲染进程目录
+|—— .babelrc 				Babel配置文件
 |—— .gitignore
 |—— package-lock.json
 |—— package.json
