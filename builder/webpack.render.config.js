@@ -20,7 +20,7 @@ let win = files.filter(page => fs.lstatSync(filePath+page).isDirectory())
 // 获取打包多页面入口
 function getEnter(win){
 	return win.reduce((a, page)=>({
-		...a, 
+		...a,
 		[page]: path.join(__dirname, `../src/renderer/${page}/index.js`)
 	}), {});
 }
@@ -121,7 +121,9 @@ module.exports = {
 		extensions:['.js','.json','.vue'],
 		// 常用路径别名
 		alias: {
-			'@': path.join(__dirname, '../src/renderer/home/')
+			'@': path.join(__dirname, '../src/renderer/home/'),
+			'@v': path.join(__dirname, '../src/renderer/view/'),
+			'@s': path.join(__dirname, '../src/renderer/share/')
 		}
 	},
 	plugins: [

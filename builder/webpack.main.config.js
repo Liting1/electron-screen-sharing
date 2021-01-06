@@ -27,7 +27,6 @@ module.exports = {
 	entry:{
 		main: ['./src/main/main.js']
 	},
-	watch: true,
 	output: {
 		path: path.join(__dirname, '../app/'),
 		libraryTarget: 'commonjs2',
