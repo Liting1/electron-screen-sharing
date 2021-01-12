@@ -54,7 +54,7 @@ class View {
         }
     }
     close(){
-        this.this.localPeerConnection.close();
+        this.localPeerConnection.close();
     }
     async createConnection( { id, localDescription } ) {
         const localPeerConnection = new RTCPeerConnection({

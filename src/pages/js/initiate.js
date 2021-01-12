@@ -61,7 +61,6 @@ class Initiate {
     // 关闭连接
     close(){
         this.localPeerConnection.close();
-        this.client.close();
     }
     handleEessage(ev) {
         console.log("获取服务端推送的消息")
@@ -85,12 +84,18 @@ class Initiate {
                 for (const source of sources) {
                     if (source.name === "Entire Screen") {
                         try {
+                            // 获取本地电脑的媒体流
                             const stream = await navigator.mediaDevices.getUserMedia({
-                                audio: false,
+                                audio: true,
+                                // audio: {
+                                //     mandatory: { // 能够捕获电脑其他应用程序发出的声音
+                                //         chromeMediaSource: 'desktop',
+                                //     }
+                                // },
                                 video: {
                                     mandatory: {
                                         chromeMediaSource: 'desktop',
-                                        chromeMediaSourceId: source.id,
+                                        // chromeMediaSourceId: source.id,
                                         maxWidth: window.screen.width,
                                         maxHeight: window.screen.height,
                                         minHeight: 500,
@@ -127,7 +132,8 @@ class Initiate {
                 user: 101,
                 msgCode: 103,
                 data: { id }
-            })
+            });
+            this.client.close();
             return RTCPeerConnection.prototype.close.apply(localPeerConnection);
         }
 

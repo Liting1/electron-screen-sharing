@@ -38,7 +38,6 @@ class App {
 	}
 	createWindow(){
 		this.win = createMianWin();
-		this.mode === 'production';
 		let filePath = this.mode === 'production'
 			? url.pathToFileURL(path.join(__dirname, 'index.html')).href
 			: "http://localhost:8090/";
@@ -66,7 +65,6 @@ class App {
 		new CreateSocket().init();		// 创建socket
 		new Shortcut(this.win);			// 设置快捷键
 		this.registerEvent(this.win);	// 注册事件
-		
 	}
 	closed(){
 		this.win = null;
