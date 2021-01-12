@@ -14,10 +14,10 @@ const url = require('url');
 class addEvent {
 	constructor(win){
 		this.win = win;
-		this.openInitiateWin();
-		this.openViewWin();
 		this.initiate = null;
 		this.view = null;
+		this.openInitiateWin();
+		this.openViewWin();
 	}
 	getPath(file){
 		let url = process.env.NODE_ENV === 'development'

@@ -12,6 +12,11 @@
 	<Button @click="openInitiate">发起屏幕共享</Button>
 	<Button @click="openView">观看屏幕分享</Button>
 	<Button @click="notice">显示通知</Button>
+	<p>
+		<a href="http://localhost:8090/view.html" target="_blank">跳转到view 页面</a>
+		<a href="http://localhost:8090/share.html" target="_blank">跳转到 share 页面</a>
+	</p>
+	<head-nav />
 </div>
 </template>
 

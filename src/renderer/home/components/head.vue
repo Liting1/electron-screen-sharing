@@ -6,8 +6,9 @@
 			<span>{{item.price}}</span>
 		</li>
 	</ul>
-	<img src="@/assets/images/tuite.png" alt="">
-	<img :src="imgUrl" alt="">
+	<img src="@/assets/images/tuite.png">
+	<img :src="imgUrl">
+	<!-- <img src="@/assets/images/test.jpg"> -->
 	<div class="imgs"></div>
 </div>
 </template>
@@ -15,7 +16,7 @@
 export default {
 	data(){
 		return {
-			imgUrl: require("@/assets/images/tuite.png"),
+			imgUrl: require("@/assets/images/result.png"),
 			goodsList: [{
 				id: 1,
 				name: '香蕉',

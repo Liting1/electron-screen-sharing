@@ -26,7 +26,6 @@ module.exports = {
 	entry:{
 		main: ['./src/main/main.js']
 	},
-	watch: true,
 	output: {
 		path: path.join(__dirname, '../app/'),
 		libraryTarget: 'commonjs2',
@@ -41,6 +40,9 @@ module.exports = {
 			test: /\.js$/,
 			loader: 'babel-loader',
 			exclude: /node_modules/
+		},{ // 处理node文件
+			test: /\.node$/,
+			loader: 'node-loader'
 		}]
 	},
 	externals: [

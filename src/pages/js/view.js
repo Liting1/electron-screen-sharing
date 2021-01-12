@@ -12,11 +12,13 @@ class View {
         this.client = null;
         this.video = document.querySelector('#vid');
         this.stereo = false;
-        this.socktUrl = 'ws://192.168.30.1:8088';
+        this.socktUrl = 'ws://192.168.22.136:8088';
         this.localPeerConnection = null;
         // {
-        //     user: 101, // 101 表示分享屏幕 102 表示观看屏幕
-        //     msgCode: 101, // 消息类型 101 获取连接ID
+        // 用户类型： 101 表示分享屏幕 102 表示观看屏幕
+        //     user: 101, 
+        // 消息类型： 101 获取连接ID, 102 发送连接信令, 103 关闭连接
+        //     msgCode: 101, 
         //     data: {}
         // }
     }
