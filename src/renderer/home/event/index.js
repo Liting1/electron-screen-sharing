@@ -9,6 +9,18 @@
 const { ipcRenderer } = require('electron');
 
 export default {
+	// 最小化窗口
+	minMainWin(){
+		ipcRenderer.send('min-main-win');
+	},
+	// 窗口最大化
+	maxMainWin(){
+		ipcRenderer.send('max-main-win');
+	},
+	closeMainWin(){
+		ipcRenderer.send('close-main-win');
+	},
+
 	openInitiateWin(){
 		ipcRenderer.send("open-initiate-win")
 	},

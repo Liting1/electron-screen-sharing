@@ -1,45 +1,26 @@
-<!--
- * @Author: your name
- * @Date: 2020-10-21 22:30:22
- * @LastEditTime: 2020-12-06 15:10:44
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: \electron-vue-template\src\renderer\views\home.vue
--->
 <template>
 <div class="home">
+	<top-bar />
+	<div class="home-content">
+		<nav-bar />
+    <div class="home-view"></div>
+	</div>
 	<!-- <input type="text" @copy="copyHandle" @paste="pasteHandle"> -->
-	<Button @click="openInitiate">发起屏幕共享</Button>
-	<Button @click="openView">观看屏幕分享</Button>
-	<Button @click="notice">显示通知</Button>
-	<p>
-		<a href="http://localhost:8090/view.html" target="_blank">跳转到view 页面</a>
-		<a href="http://localhost:8090/share.html" target="_blank">跳转到 share 页面</a>
-	</p>
-	<head-nav />
+<!--	<Button @click="openInitiate">发起屏幕共享</Button>-->
+<!--	<Button @click="openView">观看屏幕分享</Button>-->
+<!--	<Button @click="notice">显示通知</Button>-->
+
 </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import headNav from '@/components/head';
+import TopBar from '@/components/TopBar';
+import NavBar from '@/components/NavBar';
 export default {
 	name: 'home',
-	data(){
-		return {
-			txt: "hello electron1"
-		}
-	},
 	components: {
-		headNav
-	},
-	computed:{
-		...mapGetters({
-			userInfo: "getUserInfo"
-		})
-	},
-	mounted(){
-		console.log(this.userInfo);
+		TopBar,
+		NavBar,
 	},
 	methods: {
 		openInitiate(){
@@ -71,3 +52,16 @@ export default {
 	}
 }
 </script>
+
+<style lang="sass" scoped>
+  .home
+    width: 100%
+    height: 100%
+    .home-content
+      height: calc(100% - 50px)
+      .home-view
+        overflow: hidden
+        height: 100%
+        background-color: coral
+
+</style>

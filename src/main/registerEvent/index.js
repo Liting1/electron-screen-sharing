@@ -10,7 +10,8 @@ const { ipcMain } = require('electron');
 const { createInitiateWin, createViewWin } = require('../createWindow');
 const path = require('path');
 const url = require('url');
-const {getWin} = require('../utils');
+const { getWin } = require('../utils');
+const mainWinEvent = require('./mainWinEvent');
 
 class AddEvent {
 	constructor(){
@@ -22,7 +23,7 @@ class AddEvent {
 		this.win = getWin('mainWin');
 		this.openInitiateWin();
 		this.openViewWin();
-
+		mainWinEvent.init(this.win);
 	}
 	getPath(file){
 		let url = process.env.NODE_ENV === 'development'

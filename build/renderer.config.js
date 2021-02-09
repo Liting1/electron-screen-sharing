@@ -1,5 +1,5 @@
 const { webpackCommonConfig, isDevMode } = require('./common.config.js');
-const {merge} = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const path = require('path');
 const fs = require('fs');
 const webpack = require('webpack');

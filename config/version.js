@@ -2,9 +2,9 @@ module.exports = {
     "version": [
         1,
         0,
-        1
+        7
     ],
     "versionType": "release",
     "versionName": "正式版",
-    "publishTime": "2020/12/20 下午12:37:54"
+    "publishTime": "2021/1/29 下午4:54:16"
 }

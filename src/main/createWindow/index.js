@@ -12,8 +12,9 @@ module.exports = {
 	createMianWin(options = {}){
 		options = Object.assign({
 			width: 1200,	// 窗口宽度
-			height: 800,	// 窗口高度
+			height: 700,	// 窗口高度
 			title: 'mainWin',
+			frame: false,
 			// autoHideMenuBar:true,
 			backgroundColor: '#fff',	// 窗口背景颜色
 			show: false,				// 创建窗口后不显示窗口
