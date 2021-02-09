@@ -8,11 +8,12 @@
  */
 const url = require("url");
 const path = require("path");
-const Shortcut = require('./shortcut');
+const shortcut = require('./shortcut');
 const electron = require('electron');
 const { createMianWin } = require('./createWindow');
-const RegisterEvent = require('./registerEvent');
-const CreateSocket = require('./socket');
+const registerEvent = require('./registerEvent');
+const createSocket = require('./socket');
+const plugins = require('./plugins');
 
 class App {
 	constructor({app, BrowserWindow}){
@@ -59,9 +60,10 @@ class App {
 	}
 	ready(){
 		this.createWindow(); 			// 创建主窗口
-		new CreateSocket().init();		// 创建socket
-		new Shortcut(this.win);			// 设置快捷键
-		new RegisterEvent(this.win);	// 注册事件
+		createSocket.init();		// 创建socket
+		shortcut.init();			// 设置快捷键
+		registerEvent.init();	// 注册事件
+		plugins.installPlugin();		// 安装插件
 	}
 	closed(){
 		this.win = null;

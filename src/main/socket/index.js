@@ -103,4 +103,4 @@ class CreateSocket extends Message {
     }
 }
 
-module.exports = CreateSocket;
+module.exports = new CreateSocket;

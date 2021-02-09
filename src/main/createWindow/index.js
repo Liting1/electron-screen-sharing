@@ -13,6 +13,7 @@ module.exports = {
 		options = Object.assign({
 			width: 1200,	// 窗口宽度
 			height: 800,	// 窗口高度
+			title: 'mainWin',
 			// autoHideMenuBar:true,
 			backgroundColor: '#fff',	// 窗口背景颜色
 			show: false,				// 创建窗口后不显示窗口
@@ -27,6 +28,7 @@ module.exports = {
 		options = Object.assign({
 			width: 1200,
 			height: 800,
+			title: 'initiateWin',
 			webPreferences: {
 				nodeIntegration: true //默认是false
 			}
@@ -37,6 +39,7 @@ module.exports = {
 		options = Object.assign({
 			width: 1200,
 			height: 800,
+			title: 'viewWin',
 			webPreferences: {
 				nodeIntegration: true
 			}

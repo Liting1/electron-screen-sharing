@@ -1,119 +1,115 @@
 {
-    "name": "Sharing_screen",
-    "version": "1.0.1",
-    "description": "template",
-    "main": "./app/main.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "dev": "node ./builder/dev.js",
-        "build": "node ./builder/build.js",
-        "test-serve": "node ./builder/dev.js mode=test",
-        "pro-serve": "node ./builder/dev.js mode=pro",
-        "dev-serve": "node ./builder/dev.js mode=dev",
-        "exp-serve": "node ./builder/dev.js mode=exp",
-        "test-build": "node ./builder/build.js mode=test",
-        "pro-build": "node ./builder/build.js mode=pro",
-        "exp-build": "node ./builder/build.js mode=exp",
-        "dev-build": "node ./builder/build.js mode=dev"
-    },
-    "sideEffects": [
-        "*.css"
-    ],
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "devDependencies": {
-        "@babel/core": "^7.12.3",
-        "@babel/plugin-transform-runtime": "^7.12.1",
-        "@babel/preset-env": "^7.12.1",
-        "archiver": "^5.0.2",
-        "babel-loader": "^8.1.0",
-        "babel-plugin-import": "^1.13.3",
-        "chalk": "^4.1.0",
-        "clean-webpack-plugin": "^3.0.0",
-        "copy-webpack-plugin": "^6.3.2",
-        "core-js": "^2.6.12",
-        "css-loader": "^5.0.0",
-        "electron": "^10.1.6",
-        "electron-builder": "^22.9.1",
-        "electron-dev-webpack-plugin": "^1.0.5",
-        "file-loader": "^6.2.0",
-        "html-webpack-plugin": "^4.5.0",
-        "mini-css-extract-plugin": "^1.1.2",
-        "node-loader": "^1.0.2",
-        "node-sass": "^4.14.1",
-        "sass-loader": "^10.0.4",
-        "style-loader": "^2.0.0",
-        "url-loader": "^4.1.1",
-        "vue-loader": "^15.9.3",
-        "vue-style-loader": "^4.1.2",
-        "vue-template-compiler": "^2.6.12",
-        "webpack": "^5.2.0",
-        "webpack-bundle-analyzer": "^4.2.0",
-        "webpack-cli": "^4.1.0",
-        "webpack-dev-server": "^3.11.0"
-    },
-    "dependencies": {
-        "axios": "^0.20.0",
-        "uuid": "^8.3.2",
-        "view-design": "^4.4.0",
-        "vue": "^2.6.12",
-        "vue-router": "^3.4.7",
-        "vuex": "^3.5.1",
-        "wrtc": "^0.4.6",
-        "ws": "^7.4.1"
-    },
-    "publish": [
-        {
-            "provider": "generic",
-            "url": "http://localhost:9090"
-        }
-    ],
-    "build": {
-        "asar": true,
-        "productName": "Sharing screen",
-        "appId": "com.electron.template",
-        "copyright": "Copyright © year motou",
-        "directories": {
-            "output": "pack"
-        },
-        "files": [
-            "app/**"
-        ],
-        "mac": {
-            "identity": "com.electron.template",
-            "target": [
-                "dmg"
-            ],
-            "artifactName": "${productName}.${ext}"
-        },
-        "dmg": {
-            "title": "${productName}",
-            "artifactName": "${productName}.${ext}"
-        },
-        "win": {
-            "legalTrademarks": "Copyright © year motou",
-            "publisherName": "electron",
-            "requestedExecutionLevel": "highestAvailable",
-            "target": [
-                {
-                    "target": "nsis",
-                    "arch": [
-                        "x64"
-                    ]
-                }
-            ],
-            "artifactName": "${productName}.${ext}"
-        },
-        "nsis": {
-            "oneClick": false,
-            "createDesktopShortcut": "always",
-            "allowToChangeInstallationDirectory": true,
-            "perMachine": true,
-            "allowElevation": true,
-            "artifactName": "${productName}-V${version}.${ext}",
-            "runAfterFinish": true,
-            "shortcutName": "SharingTheScreen"
-        }
+  "name": "sharing_screen",
+  "version": "1.0.1",
+  "description": "template",
+  "main": "./app/main.js",
+  "scripts": {
+    "dev": "node ./build/webpack.config.js MODE=dev NODE_ENV=development",
+    "build": "node ./build/webpack.config.js MODE=dev NODE_ENV=production",
+    "test-serve": "node ./build/webpack.config.js MODE=test NODE_ENV=development",
+    "pro-serve": "node ./build/webpack.config.js MODE=pro NODE_ENV=development",
+    "dev-serve": "node ./build/webpack.config.js MODE=dev NODE_ENV=development",
+    "exp-serve": "node ./build/webpack.config.js MODE=exp NODE_ENV=development",
+    "test-build": "node ./build/webpack.config.js MODE=test NODE_ENV=production",
+    "pro-build": "node ./build/webpack.config.js MODE=pro NODE_ENV=production",
+    "exp-build": "node ./build/webpack.config.js MODE=exp NODE_ENV=production",
+    "dev-build": "node ./build/webpack.config.js MODE=dev NODE_ENV=production"
+  },
+  "keywords": ["屏幕分享", "屏幕共享", "直播", "electron+vue"],
+  "author": "mutou",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-transform-runtime": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "archiver": "^5.0.2",
+    "babel-loader": "^8.1.0",
+    "babel-plugin-import": "^1.13.3",
+    "chalk": "^4.1.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "copy-webpack-plugin": "^6.3.2",
+    "core-js": "^2.6.12",
+    "css-loader": "^5.0.0",
+    "electron": "^10.1.6",
+    "electron-builder": "^22.9.1",
+    "electron-dev-webpack-plugin": "^1.0.5",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^4.5.0",
+    "mini-css-extract-plugin": "^1.1.2",
+    "node-loader": "^1.0.2",
+    "node-sass": "^4.14.1",
+    "sass-loader": "^10.0.4",
+    "style-loader": "^2.0.0",
+    "url-loader": "^4.1.1",
+    "vue-loader": "^15.9.3",
+    "vue-style-loader": "^4.1.2",
+    "vue-template-compiler": "^2.6.12",
+    "webpack": "^5.2.0",
+    "webpack-bundle-analyzer": "^4.2.0",
+    "webpack-cli": "^4.1.0",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "dependencies": {
+    "axios": "^0.20.0",
+    "uuid": "^8.3.2",
+    "view-design": "^4.4.0",
+    "vue": "^2.6.12",
+    "vue-router": "^3.4.7",
+    "vuex": "^3.5.1",
+    "wrtc": "^0.4.6",
+    "ws": "^7.4.1"
+  },
+  "publish": [
+    {
+      "provider": "generic",
+      "url": "http://localhost:9090"
     }
+  ],
+  "build": {
+    "asar": true,
+    "productName": "sharing screen",
+    "appId": "com.electron.template",
+    "copyright": "Copyright © year motou",
+    "directories": {
+      "output": "pack"
+    },
+    "files": [
+      "app/**"
+    ],
+    "mac": {
+      "identity": "com.electron.template",
+      "target": [
+        "dmg"
+      ],
+      "artifactName": "${productName}.${ext}"
+    },
+    "dmg": {
+      "title": "${productName}",
+      "artifactName": "${productName}.${ext}"
+    },
+    "win": {
+      "legalTrademarks": "Copyright © year motou",
+      "publisherName": "electron",
+      "requestedExecutionLevel": "highestAvailable",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "${productName}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "createDesktopShortcut": "always",
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": true,
+      "allowElevation": true,
+      "artifactName": "${productName}-V${version}.${ext}",
+      "runAfterFinish": true,
+      "shortcutName": "sharing screen"
+    }
+  }
 }

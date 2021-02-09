@@ -12,7 +12,7 @@ class View {
         this.client = null;
         this.video = document.querySelector('#vid');
         this.stereo = false;
-        this.socktUrl = 'ws://192.168.22.136:8088';
+        this.socktUrl = 'ws://192.168.30.1:8088';
         this.localPeerConnection = null;
         // {
         // 用户类型： 101 表示分享屏幕 102 表示观看屏幕

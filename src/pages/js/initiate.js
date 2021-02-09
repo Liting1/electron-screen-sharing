@@ -14,7 +14,7 @@ class Initiate {
         this.video = this.getEl('#move');
         this.client = null;
         this.stereo = false;
-        this.socktUrl = 'ws://192.168.22.136:8088';
+        this.socktUrl = 'ws://192.168.30.1:8088';
         this.localPeerConnection = null;
         // {
         //     user: 101, // 101 表示分享屏幕 102 表示观看屏幕
@@ -86,7 +86,7 @@ class Initiate {
                         try {
                             // 获取本地电脑的媒体流
                             const stream = await navigator.mediaDevices.getUserMedia({
-                                audio: true,
+                                // audio: true,
                                 // audio: {
                                 //     mandatory: { // 能够捕获电脑其他应用程序发出的声音
                                 //         chromeMediaSource: 'desktop',

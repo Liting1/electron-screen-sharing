@@ -1,5 +1,3 @@
-'use strict';
-
 const ConnectionManager = require('./connectionmanager');
 const WebRtcConnection = require('./webrtcconnection');
 
