@@ -25,10 +25,10 @@ module.exports = {
 		}, options);
 		return new BrowserWindow(options);
 	},
-	createInitiateWin(options = {}){
+	createShareWin(options = {}){
 		options = Object.assign({
 			width: 1200,
-			height: 800,
+			height: 700,
 			title: 'initiateWin',
 			webPreferences: {
 				nodeIntegration: true //默认是false

@@ -1,3 +1,3 @@
 <template>
-	<div>Share page</div>
+<router-view />
 </template>

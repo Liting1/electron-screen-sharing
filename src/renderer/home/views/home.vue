@@ -3,24 +3,23 @@
 	<top-bar />
 	<div class="home-content">
 		<nav-bar />
-    <div class="home-view"></div>
+    	<div class="home-view">
+			<view-content />
+    	</div>
 	</div>
-	<!-- <input type="text" @copy="copyHandle" @paste="pasteHandle"> -->
-<!--	<Button @click="openInitiate">发起屏幕共享</Button>-->
-<!--	<Button @click="openView">观看屏幕分享</Button>-->
-<!--	<Button @click="notice">显示通知</Button>-->
-
 </div>
 </template>
 
 <script>
 import TopBar from '@/components/TopBar';
 import NavBar from '@/components/NavBar';
+import ViewContent from '@/components/ViewContent';
 export default {
 	name: 'home',
 	components: {
 		TopBar,
 		NavBar,
+		ViewContent,
 	},
 	methods: {
 		openInitiate(){
@@ -30,7 +29,7 @@ export default {
 			this.$ev.openViewWin();
 		},
 		alert(){
-			console.log(window.env);
+			
 			alert('hello electron');
 		},
 		// 复制事件

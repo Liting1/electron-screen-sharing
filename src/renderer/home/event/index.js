@@ -21,8 +21,8 @@ export default {
 		ipcRenderer.send('close-main-win');
 	},
 
-	openInitiateWin(){
-		ipcRenderer.send("open-initiate-win")
+	openShareWin(){
+		ipcRenderer.send("open-share-win")
 	},
 	openViewWin(){
 		ipcRenderer.send('open-view-win');

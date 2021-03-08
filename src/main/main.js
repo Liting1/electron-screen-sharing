@@ -63,7 +63,9 @@ class App {
 		createSocket.init();		// 创建socket
 		shortcut.init();			// 设置快捷键
 		registerEvent.init();	// 注册事件
-		plugins.installPlugin();		// 安装插件
+		if(NODE_ENV === 'development') {
+      		plugins.installPlugin();    // 安装插件
+   		}
 	}
 	closed(){
 		this.win = null;
