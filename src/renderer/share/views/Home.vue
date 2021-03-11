@@ -103,8 +103,6 @@ export default {
                         // chromeMediaSourceId: source.id,
                         maxWidth: window.screen.width,
                         maxHeight: window.screen.height,
-                        minHeight: 500,
-                        maxHeight: 500,
                       },
                     },
                   });

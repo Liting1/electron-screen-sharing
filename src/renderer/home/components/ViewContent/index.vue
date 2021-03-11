@@ -1,11 +1,11 @@
 <template>
   <div>
     <div>
-      <video id="vid" autoplay controls ref="vid"></video>
+      <video width="100%" id="vid" autoplay ref="vid"></video>
     </div>
     <div class="controls">
-      <button @click="connectionSocket">开始</button>
-      <button @click="close">结束</button>
+      <Button @click="connectionSocket">开始</Button>
+      <Button @click="close">结束</Button>
     </div>
   </div>
 </template>
@@ -13,9 +13,9 @@
 <script>
 /* {
   用户类型： 101 表示分享屏幕 102 表示观看屏幕
-      user: 101, 
+      user: 101,
   消息类型： 101 获取连接ID, 102 发送连接信令, 103 关闭连接
-      msgCode: 101, 
+      msgCode: 101,
       data: {}
 } */
 export default {
@@ -26,7 +26,7 @@ export default {
       stereo: false,
       localPeerConnection: null,
       video: null,
-      socktUrl: "ws://192.168.30.1:8088",
+      socketUrl: "ws://192.168.30.1:8088",
     };
   },
   mounted() {
@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     connectionSocket() {
-      this.client = new WebSocket(this.socktUrl);
+      this.client = new WebSocket(this.socketUrl);
       // 当客户端连接成功之后就会触发open事件
       this.client.addEventListener("open", (ev) => this.handleOpen(ev));
       this.client.addEventListener("message", (ev) => this.handleMessage(ev));
@@ -55,6 +55,7 @@ export default {
       let { user, msgCode, data } = JSON.parse(ev.data);
       if (user === 102) {
         if (msgCode === 101) {
+          console.log(101, data)
           this.createConnection(data);
         } else if (msgCode === 102) {
           console.log(222, data);
@@ -124,5 +125,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="sass">
+#vid
+  background-color: #2c3e50
 </style>

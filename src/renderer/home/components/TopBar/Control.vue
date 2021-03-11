@@ -1,19 +1,19 @@
 <template>
   <div class="control">
-    <Icon type="md-remove" class="md-remove" @click="handleRemove" />
+    <Icon type="md-remove" class="md-remove no-drag" @click="handleRemove" />
     <Icon
       v-if="isMax"
       type="ios-browsers-outline"
-      class="ios-browsers-outline"
+      class="ios-browsers-outline no-drag"
       @click="handleMaxWin"
     />
     <Icon
       v-else
       type="md-square-outline"
-      class="md-square-outline"
+      class="md-square-outline no-drag"
       @click="handleMaxWin"
     />
-    <Icon type="md-close" class="md-close" @click="handleClose" />
+    <Icon type="md-close" class="md-close no-drag" @click="handleClose" />
   </div>
 </template>
 

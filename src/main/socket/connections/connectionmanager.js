@@ -53,7 +53,9 @@ class ConnectionManager {
       const connection = new Connection(id);
 
       // 1. Add the "closed" listener.
-      function closedListener() { deleteConnection(connection); }
+      function closedListener() {
+        deleteConnection(connection);
+      }
       closedListeners.set(connection, closedListener);
       connection.once('closed', closedListener);
 

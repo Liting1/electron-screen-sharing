@@ -22,7 +22,7 @@ class Message {
     }
     send(ws, data) {
         ws.send(JSON.stringify(data));
-        
+
     }
     async getID(ws, user) {
         const data = {
@@ -36,7 +36,7 @@ class Message {
             const connection = user === 101
                 ? await this.connectionManagerServer.createConnection()
                 : await this.connectionManagerView.createConnection();
-            this.send(ws, {
+          this.send(ws, {
                 ...data,
                 data: connection
             });
@@ -59,7 +59,7 @@ class Message {
         const connection = user === 101
             ? await this.connectionManagerServer.getConnection(id)
             : await this.connectionManagerView.getConnection(id);
-        
+
         if (!connection) return this.send(ws, data);
 
         try {
@@ -122,8 +122,8 @@ class Message {
         const videoTransceiver = peerConnection.addTransceiver('video');
 
         function onNewBroadcast({ audioTrack, videoTrack }) {
-            audioTransceiver.sender.replaceTrack(audioTrack),
-            videoTransceiver.sender.replaceTrack(videoTrack)
+            audioTransceiver.sender.replaceTrack(audioTrack);
+            videoTransceiver.sender.replaceTrack(videoTrack);
         }
 
         broadcaster.on('newBroadcast', onNewBroadcast)

@@ -7,11 +7,13 @@ import 'view-design/dist/styles/iview.css';
 import {
 	Button,
 	Table,
-	Icon
+	Icon,
+  Input
 } from 'view-design';
 Vue.component('Button', Button);
 Vue.component('Table', Table);
 Vue.component('Icon', Icon);
+Vue.component('Input', Input);
 
 Vue.prototype.$ev = event;
 
