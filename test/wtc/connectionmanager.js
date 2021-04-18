@@ -28,9 +28,11 @@ class ConnectionManager {
     const connections = new Map();
     const closedListeners = new Map();
 
+    // 创建一个 连接id
     function createId() {
       do {
         const id = generateId();
+        // 如果不存在这个id 则直接返回这个id
         if (!connections.has(id)) {
           return id;
         }
@@ -48,18 +50,21 @@ class ConnectionManager {
       connections.delete(connection.id);
     }
 
+    // 创建一个连接
     this.createConnection = () => {
       const id = createId();
+      // 创建一个webRTC连接
       const connection = new Connection(id);
 
-      // 1. Add the "closed" listener.
+      // 1. 添加关闭连接函数
       function closedListener() {
         deleteConnection(connection);
       }
+      // 添加连接与对应连接关闭的映射
       closedListeners.set(connection, closedListener);
       connection.once('closed', closedListener);
 
-      // 2. Add the Connection to the Map.
+      // 2. 添加对应连接id 与连接之间的映射
       connections.set(connection.id, connection);
       return connection;
     };

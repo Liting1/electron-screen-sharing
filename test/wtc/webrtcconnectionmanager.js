@@ -10,6 +10,7 @@ class WebRtcConnectionManager {
 
     const connectionManager = new ConnectionManager(options);
 
+    // 创建一个连接
     this.createConnection = async () => {
       const connection = connectionManager.createConnection();
       await connection.doOffer();

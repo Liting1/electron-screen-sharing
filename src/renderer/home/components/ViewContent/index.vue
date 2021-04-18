@@ -55,8 +55,7 @@ export default {
       let { user, msgCode, data } = JSON.parse(ev.data);
       if (user === 102) {
         if (msgCode === 101) {
-          console.log(101, data)
-          this.createConnection(data);
+          await this.createConnection(data);
         } else if (msgCode === 102) {
           console.log(222, data);
         } else if (msgCode === 103) {

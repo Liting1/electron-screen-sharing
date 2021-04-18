@@ -1,142 +1,131 @@
 const { EventEmitter } = require('events');
-const broadcaster = new EventEmitter();
-const WebRtcConnectionManager = require('./connections/webrtcconnectionmanager');
-
+const broadcast = new EventEmitter();
+const createRoom = require('./connections/createRoom');
+const createView = require('./connections/view');
 
 class Message {
-    constructor() {
-        // {
-        //     user: 101, // 101 表示分享屏幕 102 表示观看屏幕
-        //     msgCode: 101, // 消息类型 101 获取连接ID
-        //     data: {},
-        //     code: 200,
-        //     message: 'success'
-        // }
-        this.connectionManagerServer = WebRtcConnectionManager.create({
-            beforeOffer: this.beforeOfferServer
-        });
-        this.connectionManagerView = WebRtcConnectionManager.create({
-            beforeOffer: this.beforeOfferView
-        });
+  constructor(ws) {
+    // {
+    //     user: 101, // 101 表示分享屏幕 102 表示观看屏幕
+    //     msgCode: 101, // 消息类型 101 获取连接ID
+    //     data: {},
+    //     code: 200,
+    //     message: 'success'
+    // }
+    this.ws = null;
+    this.room = null;
+    this.views = new Map();
+  }
+  init(ws){
+    this.ws = ws;
+  }
 
+  send(data) {
+    this.ws.send(JSON.stringify(data));
+  }
+
+  // 创建连接
+  async createConn(user) {
+    const data = {
+      user,
+      msgCode: 101,
+      data: null,
+      message: 'success',
+      code: 200
     }
-    send(ws, data) {
-        ws.send(JSON.stringify(data));
+    try {
+      let localDescription = null, id = null;
+      if (user === 101) {
+        this.room = new createRoom(broadcast);
+        localDescription = await this.room.init();
+        id = this.room.homeID;
+      }
 
+      if(user === 102) {
+        let view = new createView(this.room, broadcast);
+        localDescription = await view.init();
+        id = view.id;
+        this.views.set(id, view);
+      }
+
+      this.send({
+        ...data,
+        data: {localDescription, id}
+      });
+    } catch (e) {
+      this.send({
+        ...data,
+        message: e,
+        code: 500
+      });
     }
-    async getID(ws, user) {
-        const data = {
-            user,
-            msgCode: 101,
-            data: null,
-            message: 'success',
-            code: 200
-        }
-        try {
-            const connection = user === 101
-                ? await this.connectionManagerServer.createConnection()
-                : await this.connectionManagerView.createConnection();
-          this.send(ws, {
-                ...data,
-                data: connection
-            });
-        } catch (e) {
-            this.send(ws, {
-                ...data,
-                message: e,
-                code: 500
-            });
-        }
+  }
+
+  // 关联远程描述
+  async remoteDescription(user, {id, ...desc}) {
+    const data = {
+      user,
+      msgCode: 102,
+      data: null,
+      message: 'connection is undefined',
+      code: 404
+    };
+
+    try {
+      if(user === 101) {
+        this.room.homeowners.setRemoteDescription(desc);
+      }
+      if(user === 102) {
+        // 通过ID获取用户
+        let view = this.views.get(id);
+        view.setRemoteDescription(desc);
+      }
+      this.send({
+        ...data,
+        message: 'success',
+        code: 200
+      });
+    } catch (error) {
+      this.send({
+        ...data,
+        code: 400,
+        message: error
+      });
     }
-    async remoteDescription(ws, user, { id, ...desc }) {
-        const data = {
-            user,
-            msgCode: 102,
-            data: null,
-            message: 'connection is undefined',
-            code: 404
-        };
-        const connection = user === 101
-            ? await this.connectionManagerServer.getConnection(id)
-            : await this.connectionManagerView.getConnection(id);
+  }
 
-        if (!connection) return this.send(ws, data);
+  // 关闭连接
+  async closeConn(user, {id}) {
+    const data = {
+      user,
+      msgCode: 103,
+      data: null,
+      message: 'connection is undefined',
+      code: 404
+    };
 
-        try {
-            await connection.applyAnswer(desc);
-            this.send(ws, {
-                ...data,
-                data: connection.toJSON().remoteDescription,
-                message: 'success',
-                code: 200
-            });
-        } catch (error) {
-            this.send(ws, {
-                ...data,
-                code: 400,
-                message: error
-            });
-        }
-    }
-    // 删除ID
-    async deleteID(ws, user, { id }) {
-        const data = {
-            user,
-            msgCode: 103,
-            data: null,
-            message: 'connection is undefined',
-            code: 404
-        };
-        const connection = user === 101
-            ? await this.connectionManagerServer.getConnection(id)
-            : await this.connectionManagerView.getConnection(id)
-
-        if (!connection) return this.send(ws, data);
-
-        connection.close();
-        this.send(ws, {
-            ...data,
-            data: connection,
-            message: 'success',
-            code: 200
-        });
-    }
-    beforeOfferServer(peerConnection) {
-        const audioTrack = broadcaster.audioTrack = peerConnection.addTransceiver('audio').receiver.track;
-        const videoTrack = broadcaster.videoTrack = peerConnection.addTransceiver('video').receiver.track;
-
-        broadcaster.emit('newBroadcast', {
-            audioTrack,
-            videoTrack
-        });
-
-        const { close } = peerConnection;
-        peerConnection.close = function() {
-            audioTrack.stop()
-            videoTrack.stop()
-            return close.apply(this, arguments);
-        };
-    }
-    beforeOfferView(peerConnection) {
-        const audioTransceiver = peerConnection.addTransceiver('audio');
-        const videoTransceiver = peerConnection.addTransceiver('video');
-
-        function onNewBroadcast({ audioTrack, videoTrack }) {
-            audioTransceiver.sender.replaceTrack(audioTrack);
-            videoTransceiver.sender.replaceTrack(videoTrack);
-        }
-
-        broadcaster.on('newBroadcast', onNewBroadcast)
-        if (broadcaster.audioTrack && broadcaster.videoTrack) {
-            onNewBroadcast(broadcaster);
-        }
-
-        const { close } = peerConnection;
-        peerConnection.close = function() {
-            broadcaster.removeListener('newBroadcast', onNewBroadcast);
-            return close.apply(this, arguments);
-        }
+    try {
+      if(user === 101) {      // 关闭房间
+        this.room.close();
+        this.room = null;
+      }
+      if(user === 102) {
+        let view = this.views.get(id);
+        view.close();
+        this.views.delete(id);
+      }
+      this.send({
+        ...data,
+        message: 'success',
+        code: 200
+      });
+    } catch (err){
+      this.send({
+        ...data, err
+      })
     }
 
+  }
 }
-module.exports = Message;
+
+module.exports = new Message;

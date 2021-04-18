@@ -9,11 +9,10 @@
 
 const WebSocket = require('ws');
 const os = require('os');
-const Message = require('./message');
+const msg = require('./message');
 
-class CreateSocket extends Message {
+class CreateSocket {
   constructor() {
-    super()
     this.wss = null;
   }
 
@@ -34,9 +33,9 @@ class CreateSocket extends Message {
   getIPAdress() {
     const interfaces = os.networkInterfaces();
     for (let devName in interfaces) {
-      const iface = interfaces[devName];
-      for (let i = 0; i < iface.length; i++) {
-        const alias = iface[i];
+      const iFace = interfaces[devName];
+      for (let i = 0; i < iFace.length; i++) {
+        const alias = iFace[i];
         if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
           return alias.address;
         }
@@ -49,7 +48,7 @@ class CreateSocket extends Message {
     this.wss.clients.forEach(client => {
       // 广播到包括自己的用户
       if (noSelf) {
-        if (client.readyState == WebSocket.OPEN) {
+        if (client.readyState === WebSocket.OPEN) {
           client.send(data);
         }
       } else {
@@ -79,17 +78,20 @@ class CreateSocket extends Message {
   // 处理客户端发送的消息
   messageHandle(d, ws) {
     let {user, msgCode, data} = JSON.parse(d);
+    // 初始化传入连接对象
+    msg.init(ws);
 
     if (user === 101 || user === 102) {
-      if (msgCode === 101) {
-        // 表示生成ID
-        this.getID(ws, user);
-      } else if (msgCode === 102) {
-        // 设置连接内容
-        this.remoteDescription(ws, user, data);
-      } else if (msgCode === 103) {
-        // 关闭分享删除连接ID
-        this.deleteID(ws, user, data);
+      switch (msgCode){
+        case 101: // 创建连接
+          msg.createConn(user).then(r => console.log(r));
+          break;
+        case 102: // 设置连接内容
+          msg.remoteDescription(user, data).then(r => console.log(r));
+          break;
+        case 103: // 关闭连接
+          msg.closeConn(user, data).then(r => console.log(r));
+          break;
       }
     }
   }

@@ -110,6 +110,7 @@ export default {
                   stream
                     .getTracks()
                     .forEach((track) => peerConnection.addTrack(track, stream));
+                  // peerConnection.addStream(stream);
                   this.video.srcObject = stream;
                   let { close } = peerConnection;
                   peerConnection.close = () => {
@@ -128,9 +129,17 @@ export default {
       }).catch((err) => console.log(err));
     },
     async createConnection({ id, localDescription }) {
+
+      // 创建一个连接 它代表了本地端机器与远端机器的一条连接
       const localPeerConnection = new RTCPeerConnection({
         sdpSemantics: "unified-plan",
       });
+
+      localPeerConnection.addEventListener('iceconnectionstatechange', function (){
+        console.log('iceconnectionstatechange', localPeerConnection.iceConnectionState);
+      })
+
+      // 关闭连接
       localPeerConnection.close = () => {
         this.send({
           user: 101,
@@ -140,10 +149,11 @@ export default {
         this.client.close();
         return RTCPeerConnection.prototype.close.apply(localPeerConnection);
       };
-
       try {
+        // 设置远程对等连接的会话描述
         await localPeerConnection.setRemoteDescription(localDescription);
         await this.getStream(localPeerConnection);
+        // 根据远程会话描述创建应答信息
         const originalAnswer = await localPeerConnection.createAnswer();
         const updatedAnswer = new RTCSessionDescription({
           type: "answer",

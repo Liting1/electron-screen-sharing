@@ -4,9 +4,9 @@
  * @LastEditTime: 2020-12-06 15:06:08
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
- * @FilePath: \electron-vue-template\src\main\createWindow\index.js
+ * @FilePath: \electron-vue-template\src\main\createWinConfig\index.js
  */
-const { BrowserWindow, dialog } = require('electron');
+const { BrowserWindow } = require('electron');
 
 module.exports = {
 	createMianWin(options = {}){

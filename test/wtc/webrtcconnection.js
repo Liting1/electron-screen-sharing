@@ -30,12 +30,12 @@ class WebRtcConnection extends Connection {
       timeToReconnected
     } = options;
 
+    // 创建远程连接
     const peerConnection = new RTCPeerConnection({
       sdpSemantics: 'unified-plan'
     });
-
     beforeOffer(peerConnection);
-
+    // 建立连接超时自动关闭连接
     let connectionTimer = options.setTimeout(() => {
       if (peerConnection.iceConnectionState !== 'connected'
         && peerConnection.iceConnectionState !== 'completed') {
@@ -68,6 +68,7 @@ class WebRtcConnection extends Connection {
     peerConnection.addEventListener('iceconnectionstatechange', onIceConnectionStateChange);
 
     this.doOffer = async () => {
+      // 创建一个邀约提议
       const offer = await peerConnection.createOffer();
       await peerConnection.setLocalDescription(offer);
       try {
@@ -105,7 +106,6 @@ class WebRtcConnection extends Connection {
         signalingState: this.signalingState
       };
     };
-
     Object.defineProperties(this, {
       iceConnectionState: {
         get() {
@@ -130,7 +130,6 @@ class WebRtcConnection extends Connection {
     });
   }
 }
-
 function descriptionToJSON(description, shouldDisableTrickleIce) {
   return !description ? {} : {
     type: description.type,
